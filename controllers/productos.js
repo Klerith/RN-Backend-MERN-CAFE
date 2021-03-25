@@ -56,9 +56,13 @@ const crearProducto = async(req, res = response ) => {
     const producto = new Producto( data );
 
     // Guardar DB
-    await producto.save();
+    const nuevoProducto = await producto.save();
+    await nuevoProducto
+        .populate('usuario', 'nombre')
+        .populate('categoria', 'nombre')
+        .execPopulate();
 
-    res.status(201).json(await producto.populate());
+    res.status(201).json( nuevoProducto );
 
 }
 
@@ -75,6 +79,11 @@ const actualizarProducto = async( req, res = response ) => {
 
     const producto = await Producto.findByIdAndUpdate(id, data, { new: true });
 
+    await producto
+        .populate('usuario', 'nombre')
+        .populate('categoria', 'nombre')
+        .execPopulate();
+        
     res.json( producto );
 
 }
